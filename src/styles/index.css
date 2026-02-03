@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-secondary: #ec4899;
+  
+  --color-background: #ffffff;
+  --color-surface: #f9fafb;
+  --color-surface-hover: #f3f4f6;
+  
+  --color-text-main: #111827;
+  --color-text-muted: #6b7280;
+  
+  --color-border: #e5e7eb;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
+  }
+  .dark .glass-panel {
+    @apply bg-slate-900/70 border-white/10;
+  }
+  
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+}
+
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #0f172a;
+    --color-surface: #1e293b;
+    --color-surface-hover: #334155;
+    --color-text-main: #f9fafb;
+    --color-text-muted: #9ca3af;
+    --color-border: #334155;
+  }
+}
+
+body {
+  @apply bg-[var(--color-background)] text-[var(--color-text-main)] font-sans antialiased transition-colors duration-200;
+}
