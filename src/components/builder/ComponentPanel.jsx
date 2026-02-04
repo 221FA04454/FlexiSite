@@ -7,9 +7,13 @@ import TextFieldsIcon from '@mui/icons-material/TextFields';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import ViewQuiltIcon from '@mui/icons-material/ViewQuilt';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import ExtensionIcon from '@mui/icons-material/Extension';
+import { usePluginStore } from '../../store/pluginStore';
 import SidebarItem from './dnd/SidebarItem';
 
 const ComponentPanel = () => {
+    const installedPlugins = usePluginStore((state) => state.installedPlugins);
+
     const categories = {
         layout: [
             { name: 'Section', type: 'Section', icon: <ViewQuiltIcon /> },
@@ -26,6 +30,18 @@ const ComponentPanel = () => {
             { name: 'Image', type: 'Image', icon: <ImageIcon /> },
         ]
     };
+
+    // Merge Plugin Components
+    Object.values(installedPlugins).forEach(plugin => {
+        if (!categories.plugins) categories.plugins = [];
+        plugin.components.forEach(comp => {
+            categories.plugins.push({
+                name: comp.label || comp.type,
+                type: comp.type,
+                icon: <ExtensionIcon sx={{ fontSize: 18 }} />
+            });
+        });
+    });
 
     return (
         <div className="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-6 h-[calc(100vh-4rem)] overflow-y-auto transition-colors duration-300">

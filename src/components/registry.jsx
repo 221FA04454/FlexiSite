@@ -130,3 +130,15 @@ export const getComponent = (type) => {
 export const getComponentDef = (type) => {
   return COMPONENT_REGISTRY[type];
 };
+
+/**
+ * Enterprise Plugin System Hook
+ * Allows third-party plugins to inject custom components at runtime
+ */
+export const registerDynamicComponent = (type, definition) => {
+    if (COMPONENT_REGISTRY[type]) {
+        console.warn(`[Registry] Component type "${type}" is already registered. Overwriting.`);
+    }
+    COMPONENT_REGISTRY[type] = definition;
+    console.info(`[Registry] Dynamically registered "${type}" component.`);
+};

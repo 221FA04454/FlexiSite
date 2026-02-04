@@ -11,6 +11,11 @@ import { useProjectStore } from '../../store/projectStore';
 import { useEditorStore } from '../../store/editorStore';
 import { COMPONENT_REGISTRY } from '../registry.jsx';
 import ThemePanel from './ThemePanel';
+import MarketplacePanel from './MarketplacePanel';
+import PreviewMode from './PreviewMode';
+import IntegrationPanel from './IntegrationPanel';
+import AnalyticsDashboard from './AnalyticsDashboard';
+import AdminDashboard from './AdminDashboard';
 import { useThemeStore, syncCSSVariables } from '../../store/themeStore';
 import { useEffect } from 'react';
 
@@ -26,6 +31,10 @@ const dropAnimation = {
 const BuilderLayout = () => {
     const [activeDragItem, setActiveDragItem] = useState(null);
     const [showThemePanel, setShowThemePanel] = useState(false);
+    const [showMarketplace, setShowMarketplace] = useState(false);
+    const [showIntegration, setShowIntegration] = useState(false);
+    const [showAnalytics, setShowAnalytics] = useState(false);
+    const [showAdmin, setShowAdmin] = useState(false);
     const addNode = useProjectStore((state) => state.addNode);
 
     const activeTheme = useThemeStore((state) => state.themes[state.activeThemeId]);
@@ -80,14 +89,26 @@ const BuilderLayout = () => {
         }
     };
 
+    const mode = useEditorStore((state) => state.mode);
+
     return (
+        <>
+        {mode === 'preview' && <PreviewMode />}
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="flex flex-col h-screen overflow-hidden">
                 <BuilderToolbar 
                 onToggleThemePanel={() => setShowThemePanel(!showThemePanel)} 
                 isThemePanelOpen={showThemePanel}
+                onOpenMarketplace={() => setShowMarketplace(true)}
+                onOpenIntegration={() => setShowIntegration(true)}
+                onOpenAnalytics={() => setShowAnalytics(true)}
+                onOpenAdmin={() => setShowAdmin(true)}
             />
             {showThemePanel && <ThemePanel onClose={() => setShowThemePanel(false)} />}
+            {showMarketplace && <MarketplacePanel onClose={() => setShowMarketplace(false)} />}
+            {showIntegration && <IntegrationPanel onClose={() => setShowIntegration(false)} />}
+            {showAnalytics && <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />}
+            {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
                 
                 <div className="flex-1 flex overflow-hidden">
                     <ComponentPanel />
@@ -134,6 +155,7 @@ const BuilderLayout = () => {
                 )}
             </div>
         </DndContext>
+        </>
     );
 };
 

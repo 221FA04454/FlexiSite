@@ -4,6 +4,7 @@ import { useEditorStore } from '../../store/editorStore'; // Import Editor Store
 import { getComponent } from '../registry.jsx';
 import EditorBlock from '../builder/EditorBlock';
 import { COMPONENT_REGISTRY } from '../registry.jsx';
+import { handleEvent } from '../../utils/interactionRuntime';
 
 // Recursive Renderer Component
 const Renderer = ({ nodeId }) => {
@@ -22,6 +23,9 @@ const Renderer = ({ nodeId }) => {
      if (!node) return null;
      return getComponent(node.type);
   }, [node?.type]);
+
+  const isHidden = node?.props?.hidden;
+  if (isHidden && editorMode === 'preview') return null;
 
   // Style Cascade Logic
   const computedStyle = useMemo(() => {
@@ -49,6 +53,7 @@ const Renderer = ({ nodeId }) => {
     return base;
   }, [node?.style, viewPort]);
 
+  const finalStyle = isHidden ? { ...computedStyle, opacity: 0.4, border: '2px dashed #ccc' } : computedStyle;
 
   if (!node || !Component) return null;
 
@@ -62,9 +67,9 @@ const Renderer = ({ nodeId }) => {
   // If root node (no parent), render directly
   if (!node.parentId) {
       return (
-         <Component id={node.id} {...node.props} style={computedStyle}>
+         <Component id={node.id} {...node.props} style={finalStyle} onClick={(e) => handleEvent(node.id, 'onClick', e)}>
             {editorMode === 'edit' ? (
-                <EditorBlock id={node.id} type={node.type} isContainer={true} style={computedStyle}>
+                <EditorBlock id={node.id} type={node.type} isContainer={true} style={finalStyle}>
                     {children}
                 </EditorBlock>
             ) : children}
@@ -78,7 +83,8 @@ const Renderer = ({ nodeId }) => {
           <Component 
             id={node.id}
             {...node.props}
-            style={computedStyle}
+            style={finalStyle}
+            onClick={(e) => handleEvent(node.id, 'onClick', e)}
           >
             {children}
           </Component>
@@ -91,12 +97,13 @@ const Renderer = ({ nodeId }) => {
       id={node.id} 
       type={node.type} 
       isContainer={isContainer}
-      style={computedStyle}
+      style={finalStyle}
     >
       <Component 
         id={node.id}
         {...node.props}
-        style={computedStyle}
+        style={finalStyle}
+        // Events are usually handled by EditorBlock in edit mode to avoid navigation
       >
         {children}
       </Component>

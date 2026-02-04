@@ -375,7 +375,15 @@ export const useProjectStore = create(
           activePage.metadata.updatedAt = Date.now();
         }),
 
-        removeNode: (nodeId) => set((state) => {
+        updateNodeInteractions: (nodeId, interactions) => set((state) => {
+        const page = state.pages[state.activePageId];
+        const node = page.tree.entities[nodeId];
+        if (node) {
+            node.interactions = interactions;
+        }
+      }),
+
+      removeNode: (nodeId) => set((state) => {
            const activePage = state.pages[state.activePageId];
            if (!activePage) return;
 

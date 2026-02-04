@@ -6,6 +6,11 @@ import { COMPONENT_REGISTRY } from '../registry.jsx';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import FlashOnIcon from '@mui/icons-material/FlashOn';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import AddIcon from '@mui/icons-material/Add';
+import { nanoid } from 'nanoid';
+import { executeInteraction } from '../../utils/interactionRuntime';
 
 const PropertiesPanel = () => {
     const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
@@ -19,6 +24,7 @@ const PropertiesPanel = () => {
 
     const updateNodeProps = useProjectStore((state) => state.updateNodeProps);
     const updateNodeStyle = useProjectStore((state) => state.updateNodeStyle);
+    const updateNodeInteractions = useProjectStore((state) => state.updateNodeInteractions);
     const removeNode = useProjectStore((state) => state.removeNode);
     const cloneNode = useProjectStore((state) => state.cloneNode);
     const saveSectionAsTemplate = useProjectStore((state) => state.saveSectionAsTemplate);
@@ -92,11 +98,11 @@ const PropertiesPanel = () => {
 
             {/* Tabs */}
             <div className="flex border-b border-slate-200 dark:border-slate-800">
-                {['settings', 'style', 'project'].map((tab) => (
+                {['settings', 'style', 'interactions', 'project'].map((tab) => (
                     <button 
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${activeTab === tab ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`flex-1 py-3 text-[9px] font-black uppercase tracking-tighter transition-colors ${activeTab === tab ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         {tab}
                     </button>
@@ -165,6 +171,141 @@ const PropertiesPanel = () => {
                     </div>
                 )}
 
+                {/* --- INTERACTIONS TAB --- */}
+                {activeTab === 'interactions' && (
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between px-1">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Events & Logic</h3>
+                            <button 
+                                onClick={() => {
+                                    const current = node.interactions || [];
+                                    updateNodeInteractions(node.id, [...current, { 
+                                        id: nanoid(6), 
+                                        event: 'onClick', 
+                                        action: { type: 'navigate', payload: {} } 
+                                    }]);
+                                }}
+                                className="p-1 px-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-[9px] font-black uppercase flex items-center gap-1 hover:bg-indigo-600 hover:text-white transition-all"
+                            >
+                                <AddIcon sx={{ fontSize: 10 }} />
+                                Add Action
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            {(node.interactions || []).map((interaction, idx) => (
+                                <div key={interaction.id} className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-3 relative group">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-lg bg-indigo-500 flex items-center justify-center text-white shadow-lg">
+                                                <FlashOnIcon sx={{ fontSize: 12 }} />
+                                            </div>
+                                            <select 
+                                                value={interaction.event}
+                                                onChange={(e) => {
+                                                    const newInteractions = [...node.interactions];
+                                                    newInteractions[idx].event = e.target.value;
+                                                    updateNodeInteractions(node.id, newInteractions);
+                                                }}
+                                                className="bg-transparent text-[10px] font-black uppercase tracking-widest text-slate-800 dark:text-white border-none focus:ring-0 cursor-pointer"
+                                            >
+                                                <option value="onClick">On Click</option>
+                                                <option value="onMouseEnter">On Hover</option>
+                                                <option value="onSubmit">On Submit</option>
+                                            </select>
+                                        </div>
+                                        <div className="flex items-center gap-1 opacity-10 group-hover:opacity-100 transition-opacity">
+                                            <button 
+                                                onClick={() => executeInteraction(interaction)} 
+                                                className="p-1 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded"
+                                                title="Test Action"
+                                            >
+                                                <PlayArrowIcon sx={{ fontSize: 14 }} />
+                                            </button>
+                                            <button 
+                                                onClick={() => {
+                                                    const newInteractions = node.interactions.filter(i => i.id !== interaction.id);
+                                                    updateNodeInteractions(node.id, newInteractions);
+                                                }}
+                                                className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                                            >
+                                                <DeleteIcon sx={{ fontSize: 14 }} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
+                                        <label className="text-[9px] font-bold text-slate-400 uppercase px-1">Perform Action</label>
+                                        <select 
+                                            value={interaction.action.type}
+                                            onChange={(e) => {
+                                                const newInteractions = [...node.interactions];
+                                                newInteractions[idx].action.type = e.target.value;
+                                                updateNodeInteractions(node.id, newInteractions);
+                                            }}
+                                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[11px] font-bold focus:ring-2 focus:ring-indigo-500/50 outline-none"
+                                        >
+                                            <option value="navigate">Navigate to Page</option>
+                                            <option value="open_url">Open URL</option>
+                                            <option value="visibility">Element Visibility</option>
+                                            <option value="scroll">Scroll to Block</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Action Specific Config */}
+                                    {interaction.action.type === 'navigate' && (
+                                        <div className="space-y-2">
+                                            <label className="text-[9px] font-bold text-slate-400 uppercase px-1">Target Page</label>
+                                            <select 
+                                                value={interaction.action.payload.pageId || ''}
+                                                onChange={(e) => {
+                                                    const newInteractions = [...node.interactions];
+                                                    newInteractions[idx].action.payload.pageId = e.target.value;
+                                                    updateNodeInteractions(node.id, newInteractions);
+                                                }}
+                                                className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[11px] font-bold outline-none"
+                                            >
+                                                <option value="">Select a page...</option>
+                                                {Object.values(pages).map(p => (
+                                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {interaction.action.type === 'open_url' && (
+                                        <div className="space-y-2">
+                                            <input 
+                                                type="text"
+                                                placeholder="https://..."
+                                                value={interaction.action.payload.url || ''}
+                                                onChange={(e) => {
+                                                    const newInteractions = [...node.interactions];
+                                                    newInteractions[idx].action.payload.url = e.target.value;
+                                                    updateNodeInteractions(node.id, newInteractions);
+                                                }}
+                                                className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[11px] font-bold outline-none"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            {(!node.interactions || node.interactions.length === 0) && (
+                                <div className="py-12 flex flex-col items-center justify-center text-center opacity-30 grayscale scale-95">
+                                    <div className="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+                                        <FlashOnIcon fontSize="large" className="text-slate-400" />
+                                    </div>
+                                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 leading-relaxed px-12">
+                                        No interactions <br/> added to this element yet.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* --- PROJECT TAB (Global Design System) --- */}
                 {activeTab === 'project' && (
                    <div className="space-y-8">
                        <div className="bg-indigo-50 dark:bg-indigo-900/10 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-500/20">

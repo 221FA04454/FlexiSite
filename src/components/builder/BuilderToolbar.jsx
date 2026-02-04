@@ -11,15 +11,22 @@ import RedoIcon from '@mui/icons-material/Redo';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SaveIcon from '@mui/icons-material/Save';
 import { useProjectStore } from '../../store/projectStore';
+import { useTemplateStore } from '../../store/templateStore';
+import { generateStaticSite } from '../../utils/publishEngine';
 import { useEditorStore } from '../../store/editorStore';
 import PageManager from './PageManager';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import PaletteIcon from '@mui/icons-material/Palette';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import ExtensionIcon from '@mui/icons-material/Extension';
+import HubIcon from '@mui/icons-material/Hub';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import SettingsIcon from '@mui/icons-material/Settings';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen }) => {
+const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen, onOpenMarketplace, onOpenIntegration, onOpenAnalytics, onOpenAdmin }) => {
   const mode = useEditorStore((state) => state.mode);
   const setMode = useEditorStore((state) => state.setMode);
   const viewPort = useEditorStore((state) => state.viewPort);
@@ -114,17 +121,68 @@ const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen }) => {
       {/* Right: Actions */}
       <div className="flex items-center gap-2">
         {/* Saved Status */}
-        <div className="hidden xl:flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20 mr-2">
+          <button 
+                onClick={async () => {
+                    if(window.confirm('Export project as a Production Bundle?')) {
+                        const bundle = await generateStaticSite();
+                        const blob = new Blob([bundle['index.html']], { type: 'text/html' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'index.html';
+                        a.click();
+                        alert('Site exported! "index.html" downloaded. Full bundle (CSS/JSON) log available in console.');
+                    }
+                }}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-indigo-500/20 active:scale-95 transition-all mr-4"
+            >
+                <RocketLaunchIcon sx={{ fontSize: 14 }} />
+                Publish
+            </button>
+
+          <div className="hidden xl:flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20 mr-2">
             <CheckCircleOutlineIcon sx={{ fontSize: 12 }} />
             <span>SAVED</span>
           </div>
 
-          <button 
+            <button 
                 onClick={onToggleThemePanel}
                 className={`p-2 rounded-xl transition-all ${isThemePanelOpen ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800'}`}
-                title="Site Design & Tokens"
+                title="Site Design"
             >
                 <PaletteIcon fontSize="small" />
+            </button>
+
+            <button 
+                onClick={onOpenMarketplace}
+                className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all"
+                title="Component Marketplace"
+            >
+                <ExtensionIcon fontSize="small" />
+            </button>
+
+            <button 
+                onClick={onOpenIntegration}
+                className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all"
+                title="SaaS Integrations & API"
+            >
+                <HubIcon fontSize="small" />
+            </button>
+
+            <button 
+                onClick={onOpenAnalytics}
+                className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all"
+                title="Site Analytics & Insights"
+            >
+                <BarChartIcon fontSize="small" />
+            </button>
+
+            <button 
+                onClick={onOpenAdmin}
+                className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all"
+                title="SaaS Admin & Deployments"
+            >
+                <SettingsIcon fontSize="small" />
             </button>
 
           <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
@@ -141,13 +199,6 @@ const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen }) => {
             title="Export Project JSON"
         >
             <FileDownloadIcon fontSize="small" />
-        </button>
-
-        <div className="h-4 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
-
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-1.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:scale-105 active:scale-95">
-            <PlayArrowIcon fontSize="small" />
-            Publish
         </button>
       </div>
     </div>
