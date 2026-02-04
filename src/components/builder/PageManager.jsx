@@ -8,6 +8,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PageSettingsModal from './PageSettingsModal';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import TemplateGallery from './TemplateGallery';
 
 const PageManager = () => {
     const pages = useProjectStore((state) => state.pages) || {};
@@ -18,6 +20,7 @@ const PageManager = () => {
     const createPage = useProjectStore((state) => state.createPage);
     const duplicatePage = useProjectStore((state) => state.duplicatePage);
     const deletePage = useProjectStore((state) => state.deletePage);
+    const applyTemplateToPage = useProjectStore((state) => state.applyTemplateToPage);
     const clearSelection = useEditorStore((state) => state.selectNode);
 
     // Local UI State
@@ -25,6 +28,8 @@ const PageManager = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [newPageName, setNewPageName] = useState('');
     const [settingsPageId, setSettingsPageId] = useState(null);
+    const [showGallery, setShowGallery] = useState(false);
+    const [applyingToId, setApplyingToId] = useState(null);
 
     const activePage = pages[activePageId];
     const pageList = Object.values(pages).sort((a, b) => a.metadata.createdAt - b.metadata.createdAt);
@@ -87,6 +92,13 @@ const PageManager = () => {
                                         
                                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button 
+                                                onClick={() => { setApplyingToId(page.id); setShowGallery(true); }}
+                                                className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-indigo-400 hover:text-indigo-600 transition-colors"
+                                                title="Apply Template"
+                                            >
+                                                <AutoAwesomeIcon sx={{ fontSize: 16 }} />
+                                            </button>
+                                            <button 
                                                 onClick={() => setSettingsPageId(page.id)}
                                                 className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 transition-colors"
                                                 title="SEO & Settings"
@@ -117,43 +129,21 @@ const PageManager = () => {
                             ))}
                         </div>
 
-                        <div className="p-3 border-t border-slate-100 dark:border-slate-800">
-                             {!isCreating ? (
-                                <button 
-                                    onClick={() => setIsCreating(true)}
-                                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-500/10 active:scale-[0.98]"
-                                >
-                                    <AddIcon fontSize="small" />
-                                    New Page
-                                </button>
-                             ) : (
-                                <form onSubmit={handleCreatePage} className="flex flex-col gap-2">
-                                    <input 
-                                        autoFocus
-                                        type="text" 
-                                        placeholder="Enter page name..." 
-                                        className="w-full px-3 py-2.5 text-sm border-2 border-slate-200 dark:border-slate-800 rounded-xl dark:bg-slate-800 focus:outline-none focus:border-indigo-500 transition-all font-medium"
-                                        value={newPageName}
-                                        onChange={(e) => setNewPageName(e.target.value)}
-                                        onBlur={() => !newPageName && setIsCreating(false)}
-                                    />
-                                    <div className="flex gap-2">
-                                        <button 
-                                            type="submit"
-                                            className="flex-1 py-1 bg-indigo-600 text-white rounded-lg text-xs font-bold"
-                                        >
-                                            Create Page
-                                        </button>
-                                        <button 
-                                            type="button"
-                                            onClick={() => setIsCreating(false)}
-                                            className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-xs font-bold"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </form>
-                             )}
+                        <div className="p-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+                             <button 
+                                onClick={() => setIsCreating(true)}
+                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-black uppercase tracking-tighter text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-500/10 active:scale-[0.98]"
+                            >
+                                <AddIcon fontSize="small" />
+                                Blank Page
+                            </button>
+                            <button 
+                                onClick={() => { setApplyingToId(null); setShowGallery(true); }}
+                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-black uppercase tracking-tighter text-indigo-600 border-2 border-indigo-100 dark:border-indigo-900/30 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 rounded-xl transition-all active:scale-[0.98]"
+                            >
+                                <AutoAwesomeIcon sx={{ fontSize: 16 }} />
+                                Template
+                            </button>
                         </div>
                     </div>
                 </>
@@ -164,6 +154,30 @@ const PageManager = () => {
                 <PageSettingsModal 
                     pageId={settingsPageId} 
                     onClose={() => setSettingsPageId(null)} 
+                />
+            )}
+
+            {showGallery && (
+                <TemplateGallery 
+                    type="page"
+                    onClose={() => setShowGallery(false)}
+                    onSelect={(tmpl) => {
+                        if (applyingToId) {
+                            if (window.confirm(`Apply template "${tmpl.name}" to the current page? This will replace all existing content.`)) {
+                                applyTemplateToPage(applyingToId, tmpl);
+                            }
+                        } else {
+                            // Create new page from template
+                            const newId = `page_${nanoid(8)}`;
+                            createPage(`${tmpl.name}`, `/${tmpl.name.toLowerCase().replace(/ /g, '-')}-${nanoid(4)}`);
+                            // Small timeout to ensure page exists before applying tree
+                            setTimeout(() => {
+                                useProjectStore.getState().applyTemplateToPage(useProjectStore.getState().activePageId, tmpl);
+                            }, 50);
+                        }
+                        setShowGallery(false);
+                        setIsOpen(false);
+                    }}
                 />
             )}
         </div>

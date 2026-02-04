@@ -3,8 +3,21 @@ import { immer } from 'zustand/middleware/immer';
 import { temporal } from 'zundo';
 import { persist } from 'zustand/middleware';
 import { nanoid } from 'nanoid';
+import { reMapTreeIds } from '../utils/treeUtils';
 
 // --- UTILITIES ---
+
+const getSubtree = (entities, nodeId) => {
+    const subtree = {};
+    const collect = (id) => {
+        const node = entities[id];
+        if (!node) return;
+        subtree[id] = JSON.parse(JSON.stringify(node));
+        node.children.forEach(collect);
+    };
+    collect(nodeId);
+    return subtree;
+};
 
 const createEmptyPage = (name, slug, isHome = false) => {
   const rootId = `root_${nanoid(8)}`;
@@ -204,6 +217,68 @@ export const useProjectStore = create(
                 alert(`Page import failed: ${err.message}`);
             }
         }),
+
+        // --- TEMPLATE ACTIONS ---
+
+        applyTemplateToPage: (pageId, template) => set((state) => {
+            const page = state.pages[pageId];
+            if (!page) return;
+
+            // Re-map IDs to ensure no collisions
+            const { rootId, entities } = reMapTreeIds(template.tree.entities, template.tree.root);
+            
+            page.tree = {
+                root: rootId,
+                entities: entities
+            };
+            page.metadata.updatedAt = Date.now();
+        }),
+
+        applyTemplateToSection: (parentId, template) => set((state) => {
+            const page = state.pages[state.activePageId];
+            if (!page || !page.tree.entities[parentId]) return;
+
+            // Re-map IDs
+            const { rootId, entities } = reMapTreeIds(template.tree.entities, template.tree.root);
+
+            // Merge entities
+            Object.assign(page.tree.entities, entities);
+
+            // Add template root ID to parent's children
+            page.tree.entities[parentId].children.push(rootId);
+            page.tree.entities[rootId].parentId = parentId;
+            page.metadata.updatedAt = Date.now();
+        }),
+
+        savePageAsTemplate: (pageId, name) => {
+            const state = get();
+            const page = state.pages[pageId];
+            if (!page) return null;
+
+            return {
+                name: name || `${page.name} Template`,
+                type: 'page',
+                tree: JSON.parse(JSON.stringify(page.tree)),
+                category: 'Custom'
+            };
+        },
+
+        saveSectionAsTemplate: (nodeId, name) => {
+            const state = get();
+            const page = state.pages[state.activePageId];
+            if (!page) return null;
+
+            const subtree = getSubtree(page.tree.entities, nodeId);
+            return {
+                name: name || `Section Template`,
+                type: 'section',
+                tree: {
+                    root: nodeId,
+                    entities: subtree
+                },
+                category: 'Custom'
+            };
+        },
 
         // --- ACTIONS: PAGE MANAGEMENT ---
 
