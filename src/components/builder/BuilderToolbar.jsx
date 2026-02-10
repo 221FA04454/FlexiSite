@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStore } from 'zustand';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LaptopIcon from '@mui/icons-material/Laptop';
 import TabletMacIcon from '@mui/icons-material/TabletMac';
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
@@ -27,6 +27,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen, onOpenMarketplace, onOpenIntegration, onOpenAnalytics, onOpenAdmin }) => {
+  const navigate = useNavigate();
   const mode = useEditorStore((state) => state.mode);
   const setMode = useEditorStore((state) => state.setMode);
   const viewPort = useEditorStore((state) => state.viewPort);
@@ -162,7 +163,7 @@ const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen, onOpenMarketplac
             </button>
 
             <button 
-                onClick={onOpenIntegration}
+                onClick={() => navigate('/saas/integrations')}
                 className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all"
                 title="SaaS Integrations & API"
             >
@@ -170,7 +171,7 @@ const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen, onOpenMarketplac
             </button>
 
             <button 
-                onClick={onOpenAnalytics}
+                onClick={() => navigate('/saas/analytics')}
                 className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all"
                 title="Site Analytics & Insights"
             >
@@ -178,7 +179,7 @@ const BuilderToolbar = ({ onToggleThemePanel, isThemePanelOpen, onOpenMarketplac
             </button>
 
             <button 
-                onClick={onOpenAdmin}
+                onClick={() => navigate('/saas/deployments')}
                 className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all"
                 title="SaaS Admin & Deployments"
             >

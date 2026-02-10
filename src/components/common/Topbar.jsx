@@ -1,56 +1,68 @@
 import React from 'react';
-import { useTheme } from '@context/ThemeContext';
-import SearchIcon from '@mui/icons-material/Search';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import { IconButton, Avatar, Badge } from '@mui/material';
+import { useTenantStore } from '../../store/saas/tenantStore';
+import TenantSwitcher from '../saas/TenantSwitcher';
+import { 
+    Avatar, IconButton, Badge, Tooltip 
+} from '@mui/material';
+import { 
+    Notifications as BellIcon,
+    Search as SearchIcon,
+    HelpOutline as HelpIcon,
+    CloudDone as StatusIcon
+} from '@mui/icons-material';
 
-const Topbar = () => {
-    const { theme, toggleTheme } = useTheme();
+const TopBar = () => {
+    const { tenants, activeTenantId } = useTenantStore();
+    const activeTenant = tenants[activeTenantId];
 
     return (
-        <header className="h-16 px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between sticky top-0 z-50 transition-colors duration-300">
-            <div className="flex items-center gap-4">
-                <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Dashboard</h1>
+        <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 sticky top-0 z-40 transition-colors">
+            <div className="flex items-center gap-6">
+                <TenantSwitcher />
+
+                <div className="h-8 w-[1px] bg-slate-100 dark:bg-slate-800" />
+                
+                <div className="flex items-center gap-2 text-slate-400">
+                    <StatusIcon sx={{ fontSize: 18 }} className="text-emerald-500" />
+                    <span className="text-xs font-bold uppercase tracking-widest">Global Edge: Online</span>
+                </div>
             </div>
 
-            <div className="flex items-center gap-4">
-                <div className="relative group hidden md:block">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-indigo-500 transition-colors" />
-                    <input
-                        type="text"
-                        placeholder="Search projects..."
-                        className="pl-10 pr-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 w-64 transition-all"
+            <div className="flex items-center gap-3">
+                <div className="relative group mr-4">
+                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-500 transition-colors" sx={{ fontSize: 20 }} />
+                    <input 
+                        type="text" 
+                        placeholder="Global command (cmd+K)" 
+                        className="bg-slate-50 dark:bg-slate-800 rounded-full py-2 pl-10 pr-4 text-xs font-medium w-64 border-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
                     />
                 </div>
 
-                <div className="flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-4 ml-2">
-                    <IconButton onClick={toggleTheme} className="transition-transform hover:rotate-12">
-                        {theme === 'dark' ? (
-                            <LightModeIcon className="text-yellow-400" />
-                        ) : (
-                            <DarkModeIcon className="text-slate-600" />
-                        )}
-                    </IconButton>
+                <Tooltip title="Documentation">
+                    <IconButton size="small" className="!text-slate-400"><HelpIcon /></IconButton>
+                </Tooltip>
+                
+                <Badge variant="dot" color="error" overlap="circular" className="mx-2">
+                    <IconButton size="small" className="!text-slate-400"><BellIcon /></IconButton>
+                </Badge>
 
-                    <IconButton>
-                        <Badge badgeContent={4} color="primary">
-                            <NotificationsIcon className="text-slate-600 dark:text-slate-300" />
-                        </Badge>
-                    </IconButton>
+                <div className="h-8 w-[1px] bg-slate-100 dark:bg-slate-800 mx-2" />
 
-                    <div className="ml-2 cursor-pointer hover:ring-2 ring-indigo-500 rounded-full transition-all">
-                        <Avatar
-                            alt="User"
-                            src="https://i.pravatar.cc/150?img=32"
-                            sx={{ width: 32, height: 32 }}
-                        />
+                <div className="flex items-center gap-3 pl-2">
+                    <div className="text-right hidden md:block">
+                        <p className="text-xs font-bold text-slate-800 dark:text-white leading-tight">Architect AI</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">System Owner</p>
                     </div>
+                    <Avatar 
+                        sx={{ width: 32, height: 32 }} 
+                        className="!bg-gradient-to-br !from-indigo-600 !to-pink-500 !text-xs !font-bold"
+                    >
+                        AD
+                    </Avatar>
                 </div>
             </div>
         </header>
     );
 };
 
-export default Topbar;
+export default TopBar;
