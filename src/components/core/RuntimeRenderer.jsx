@@ -21,10 +21,6 @@ const RuntimeRenderer = ({ nodeId }) => {
     return getComponent(node.type);
   }, [node?.type]);
 
-  // 2. Visibility Check
-  const isHidden = node?.props?.hidden;
-  if (isHidden) return null;
-
   // 3. Style Resolution (Responsive)
   // Note: For simplicity, the runtime assumes 'desktop' or uses CSS Media Queries
   // In this preview version, we pull from the store's current viewport
@@ -32,6 +28,10 @@ const RuntimeRenderer = ({ nodeId }) => {
     if (!node?.style) return {};
     return node.style.desktop || {};
   }, [node?.style]);
+
+  // 2. Visibility Check
+  const isHidden = node?.props?.hidden;
+  if (isHidden) return null;
 
   if (!node || !Component) return null;
 

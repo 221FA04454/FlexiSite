@@ -16,25 +16,6 @@ import DNSRecordsBlock from '../../components/saas/DNSRecordsBlock';
 import SSLStatusBadge from '../../components/saas/SSLStatusBadge';
 import DomainHealthBadge from '../../components/saas/DomainHealthBadge';
 
-const DomainDetails = () => {
-    const { domainId } = useParams();
-    const navigate = useNavigate();
-    const { activeTenantId } = useTenantStore();
-    const { domains, verifyDNS, provisionSSL, deleteDomain, checkHealth } = useDomainStore();
-    const [activeTab, setActiveTab] = useState(0);
-    const [verifying, setVerifying] = useState(false);
-
-    const domain = domains[activeTenantId]?.find(d => d.id === domainId);
-    const canManage = usePermission('manage_domains');
-
-    if (!domain) return <div className="p-20 text-center font-bold text-red-500">Domain record not found.</div>;
-
-    const handleVerify = async () => {
-        setVerifying(true);
-        await verifyDNS(activeTenantId, domainId);
-        setVerifying(false);
-    };
-
     const TabPanel = (props) => {
         const { children, value, index, ...other } = props;
         return (
@@ -42,6 +23,25 @@ const DomainDetails = () => {
                 {value === index && <Box className="py-6">{children}</Box>}
             </div>
         );
+    };
+
+const DomainDetails = () => {
+    const { domainId } = useParams();
+    const navigate = useNavigate();
+    const { activeTenantId } = useTenantStore();
+    const { domains, verifyDNS, deleteDomain } = useDomainStore();
+    const [activeTab, setActiveTab] = useState(0);
+    const [verifying, setVerifying] = useState(false);
+
+    const domain = domains[activeTenantId]?.find(d => d.id === domainId);
+    // const canManage = usePermission('manage_domains'); // Unused
+
+    if (!domain) return <div className="p-20 text-center font-bold text-red-500">Domain record not found.</div>;
+
+    const handleVerify = async () => {
+        setVerifying(true);
+        await verifyDNS(activeTenantId, domainId);
+        setVerifying(false);
     };
 
     return (

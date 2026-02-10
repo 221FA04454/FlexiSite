@@ -3,6 +3,14 @@ import { Box, Chip } from '@mui/material';
 import { MousePointer2, Sparkles, Lock } from 'lucide-react';
 
 const AnalyticsHeatmap = ({ pageName = "/home" }) => {
+    const heatDots = React.useMemo(() => [...Array(50)].map((_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        scale: Math.random() * 2,
+        opacity: Math.random()
+    })), []);
+
     return (
         <div className="relative rounded-3xl overflow-hidden border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 group h-[500px]">
             {/* Mock Page Content */}
@@ -52,15 +60,15 @@ const AnalyticsHeatmap = ({ pageName = "/home" }) => {
             
             {/* Random Dots (Heat points) */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-                {[...Array(50)].map((_, i) => (
+                {heatDots.map((dot) => (
                     <div 
-                        key={i}
+                        key={dot.id}
                         className="absolute w-4 h-4 bg-orange-400 rounded-full blur-md"
                         style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            transform: `scale(${Math.random() * 2})`,
-                            opacity: Math.random()
+                            left: dot.left,
+                            top: dot.top,
+                            transform: `scale(${dot.scale})`,
+                            opacity: dot.opacity
                         }}
                     />
                 ))}

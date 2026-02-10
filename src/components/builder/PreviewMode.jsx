@@ -1,4 +1,5 @@
 import RuntimeRenderer from '../core/RuntimeRenderer';
+import React from 'react';
 import { useProjectStore } from '../../store/projectStore';
 import { useEditorStore } from '../../store/editorStore';
 import { useThemeStore } from '../../store/themeStore';

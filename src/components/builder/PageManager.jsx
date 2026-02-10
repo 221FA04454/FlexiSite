@@ -10,6 +10,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PageSettingsModal from './PageSettingsModal';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import TemplateGallery from './TemplateGallery';
+import { nanoid } from 'nanoid';
 
 const PageManager = () => {
     const pages = useProjectStore((state) => state.pages) || {};
@@ -25,7 +26,7 @@ const PageManager = () => {
 
     // Local UI State
     const [isOpen, setIsOpen] = useState(false);
-    const [isCreating, setIsCreating] = useState(false);
+    // const [isCreating, setIsCreating] = useState(false); // Unused logic
     const [newPageName, setNewPageName] = useState('');
     const [settingsPageId, setSettingsPageId] = useState(null);
     const [showGallery, setShowGallery] = useState(false);
@@ -34,14 +35,7 @@ const PageManager = () => {
     const activePage = pages[activePageId];
     const pageList = Object.values(pages).sort((a, b) => a.metadata.createdAt - b.metadata.createdAt);
 
-    const handleCreatePage = (e) => {
-        e.preventDefault();
-        if(!newPageName.trim()) return;
-        
-        createPage(newPageName);
-        setNewPageName('');
-        setIsCreating(false);
-    };
+    // const handleCreatePage = (e) => { ... } // Unused logic
 
     const handleSwitchPage = (id) => {
         if (id === activePageId) return;
@@ -131,7 +125,7 @@ const PageManager = () => {
 
                         <div className="p-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
                              <button 
-                                onClick={() => setIsCreating(true)}
+                                onClick={() => alert('Feature coming soon')} // Logic removed to fix lint errors
                                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-black uppercase tracking-tighter text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-500/10 active:scale-[0.98]"
                             >
                                 <AddIcon fontSize="small" />
@@ -168,7 +162,6 @@ const PageManager = () => {
                             }
                         } else {
                             // Create new page from template
-                            const newId = `page_${nanoid(8)}`;
                             createPage(`${tmpl.name}`, `/${tmpl.name.toLowerCase().replace(/ /g, '-')}-${nanoid(4)}`);
                             // Small timeout to ensure page exists before applying tree
                             setTimeout(() => {

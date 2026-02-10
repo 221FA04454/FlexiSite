@@ -16,28 +16,6 @@ import {
     History as LogsIcon
 } from '@mui/icons-material';
 
-const Sidebar = () => {
-    const mainNav = [
-        { name: 'Dashboard', icon: <DashIcon />, path: '/dashboard' },
-        { name: 'Builder', icon: <WebIcon />, path: '/builder' },
-        { name: 'Components', icon: <LayersIcon />, path: '/components' },
-    ];
-
-    const saasNav = [
-        { name: 'Tenants', icon: <TenantIcon />, path: '/saas/tenants' },
-        { name: 'API Keys', icon: <ApiIcon />, path: '/saas/api-keys' },
-        { name: 'Domains', icon: <DomainIcon />, path: '/saas/domains' },
-        { name: 'Deployments', icon: <DeployIcon />, path: '/saas/deployments' },
-        { name: 'Integrations', icon: <IntegrationIcon />, path: '/saas/integrations' },
-        { name: 'Analytics', icon: <AnalyticsIcon />, path: '/saas/analytics' },
-        { name: 'Logs', icon: <LogsIcon />, path: '/saas/logs' },
-        { name: 'Usage', icon: <BillingIcon />, path: '/saas/usage' },
-    ];
-
-    const settingsNav = [
-        { name: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-    ];
-
     const NavGroup = ({ title, items }) => (
         <div className="space-y-1">
             {title && (
@@ -64,6 +42,28 @@ const Sidebar = () => {
             ))}
         </div>
     );
+
+const Sidebar = () => {
+    const mainNav = [
+        { name: 'Dashboard', icon: <DashIcon />, path: '/dashboard' },
+        { name: 'Builder', icon: <WebIcon />, path: '/builder' },
+        { name: 'Components', icon: <LayersIcon />, path: '/components' },
+    ];
+
+    const saasNav = [
+        { name: 'Tenants', icon: <TenantIcon />, path: '/saas/tenants' },
+        { name: 'API Keys', icon: <ApiIcon />, path: '/saas/api-keys' },
+        { name: 'Domains', icon: <DomainIcon />, path: '/saas/domains' },
+        { name: 'Deployments', icon: <DeployIcon />, path: '/saas/deployments' },
+        { name: 'Integrations', icon: <IntegrationIcon />, path: '/saas/integrations' },
+        { name: 'Analytics', icon: <AnalyticsIcon />, path: '/saas/analytics' },
+        { name: 'Logs', icon: <LogsIcon />, path: '/saas/logs' },
+        { name: 'Usage', icon: <BillingIcon />, path: '/saas/usage' },
+    ];
+
+    const settingsNav = [
+        { name: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+    ];
 
     return (
         <aside className="h-screen w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-colors duration-300 z-50 overflow-y-auto custom-scrollbar">

@@ -12,7 +12,7 @@ const IntegrationPanel = ({ onClose }) => {
     const activePageId = useProjectStore((state) => state.activePageId);
     const activePage = useProjectStore((state) => state.pages[activePageId]);
     const [copied, setCopied] = useState(false);
-    const [apiKey] = useState(`fs_live_${Math.random().toString(36).substr(2, 16)}`);
+    const [apiKey] = useState(() => `fs_live_${Math.random().toString(36).substr(2, 16)}`);
 
     const embedCode = `
 <script 

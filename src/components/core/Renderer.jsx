@@ -24,9 +24,6 @@ const Renderer = ({ nodeId }) => {
      return getComponent(node.type);
   }, [node?.type]);
 
-  const isHidden = node?.props?.hidden;
-  if (isHidden && editorMode === 'preview') return null;
-
   // Style Cascade Logic
   const computedStyle = useMemo(() => {
     if (!node?.style) return {};
@@ -52,10 +49,12 @@ const Renderer = ({ nodeId }) => {
 
     return base;
   }, [node?.style, viewPort]);
+  
+  const isHidden = node?.props?.hidden;
+  if (isHidden && editorMode === 'preview') return null;
+  if (!node || !Component) return null;
 
   const finalStyle = isHidden ? { ...computedStyle, opacity: 0.4, border: '2px dashed #ccc' } : computedStyle;
-
-  if (!node || !Component) return null;
 
   // Render children recursively
   const children = node.children?.map((childId) => (

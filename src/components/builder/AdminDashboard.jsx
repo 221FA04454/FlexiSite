@@ -19,7 +19,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 
 import { useSaaSStore } from '../../store/saasStore';
-import { useProjectStore } from '../../store/projectStore';
 import AnalyticsDashboard from './AnalyticsDashboard'; // We can reuse the view parts
 
 const StatCard = ({ title, value, limit, unit = '' }) => {
@@ -43,6 +42,16 @@ const StatCard = ({ title, value, limit, unit = '' }) => {
     );
 };
 
+    const SidebarItem = ({ id, label, icon, isActive, onClick }) => (
+        <button 
+            onClick={() => onClick(id)}
+            className={`w-full flex items-center gap-4 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${isActive ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40'}`}
+        >
+            {icon}
+            <span className="flex-1 text-left">{label}</span>
+        </button>
+    );
+
 const AdminDashboard = ({ onClose }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const tenant = useSaaSStore(state => state.tenants[state.activeTenantId]);
@@ -51,16 +60,6 @@ const AdminDashboard = ({ onClose }) => {
     const createKey = useSaaSStore(state => state.createApiKey);
     const addDomain = useSaaSStore(state => state.addDomain);
     const verifyDomain = useSaaSStore(state => state.verifyDomain);
-
-    const SidebarItem = ({ id, label, icon }) => (
-        <button 
-            onClick={() => setActiveTab(id)}
-            className={`w-full flex items-center gap-4 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40'}`}
-        >
-            {icon}
-            <span className="flex-1 text-left">{label}</span>
-        </button>
-    );
 
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xl z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
@@ -85,23 +84,23 @@ const AdminDashboard = ({ onClose }) => {
 
                     <div className="flex-1 space-y-1.5 px-2">
                         <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 block opacity-50">Management</label>
-                        <SidebarItem id="overview" label="Overview" icon={<DashboardIcon sx={{ fontSize: 18 }} />} />
-                        <SidebarItem id="tenants" label="Teams & Users" icon={<CorporateFareIcon sx={{ fontSize: 18 }} />} />
-                        <SidebarItem id="projects" label="Project Assets" icon={<HubIcon sx={{ fontSize: 18 }} />} />
+                        <SidebarItem id="overview" label="Overview" icon={<DashboardIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'overview'} onClick={setActiveTab} />
+                        <SidebarItem id="tenants" label="Teams & Users" icon={<CorporateFareIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'tenants'} onClick={setActiveTab} />
+                        <SidebarItem id="projects" label="Project Assets" icon={<HubIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'projects'} onClick={setActiveTab} />
                         
                         <div className="pt-6 pb-2">
                             <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 block opacity-50">Operations</label>
                         </div>
-                        <SidebarItem id="deployments" label="Builds & Edge" icon={<RocketIcon sx={{ fontSize: 18 }} />} />
-                        <SidebarItem id="domains" label="Custom Domains" icon={<LanguageIcon sx={{ fontSize: 18 }} />} />
-                        <SidebarItem id="apikeys" label="API Infrastructure" icon={<VpnKeyIcon sx={{ fontSize: 18 }} />} />
-                        <SidebarItem id="analytics" label="Site Insights" icon={<BarChartIcon sx={{ fontSize: 18 }} />} />
+                        <SidebarItem id="deployments" label="Builds & Edge" icon={<RocketIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'deployments'} onClick={setActiveTab} />
+                        <SidebarItem id="domains" label="Custom Domains" icon={<LanguageIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'domains'} onClick={setActiveTab} />
+                        <SidebarItem id="apikeys" label="API Infrastructure" icon={<VpnKeyIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'apikeys'} onClick={setActiveTab} />
+                        <SidebarItem id="analytics" label="Site Insights" icon={<BarChartIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'analytics'} onClick={setActiveTab} />
                         
                         <div className="pt-6 pb-2">
                             <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 block opacity-50">System</label>
                         </div>
-                        <SidebarItem id="logs" label="Audit Logs" icon={<HistoryIcon sx={{ fontSize: 18 }} />} />
-                        <SidebarItem id="settings" label="Billing & Quotas" icon={<SettingsIcon sx={{ fontSize: 18 }} />} />
+                        <SidebarItem id="logs" label="Audit Logs" icon={<HistoryIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'logs'} onClick={setActiveTab} />
+                        <SidebarItem id="settings" label="Billing & Quotas" icon={<SettingsIcon sx={{ fontSize: 18 }} />} isActive={activeTab === 'settings'} onClick={setActiveTab} />
                     </div>
 
                     <button 
