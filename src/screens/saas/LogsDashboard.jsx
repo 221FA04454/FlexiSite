@@ -13,7 +13,7 @@ import { usePermission } from '../../hooks/usePermission';
 
 import LogFilters from '../../components/saas/logs/LogFilters';
 import LogListTable from '../../components/saas/logs/LogListTable';
-
+import LogCard from '../../components/saas/logs/LogCard';
 import LogDetailsDrawer from '../../components/saas/logs/LogDetailsDrawer';
 import DeleteLogModal from '../../components/saas/logs/DeleteLogModal';
 import ExportLogsButton from '../../components/saas/logs/ExportLogsButton';
@@ -26,7 +26,7 @@ const LogsDashboard = () => {
         deleteLog, loading, selectedLogId, setSelectedLog 
     } = useLogStore();
     
-
+    const [viewMode, setViewMode] = useState('table'); // table or cards
     const [deleteQueued, setDeleteQueued] = useState(null);
 
     // Permission check
@@ -35,7 +35,7 @@ const LogsDashboard = () => {
 
     useEffect(() => {
         if (activeTenantId) fetchLogs(activeTenantId);
-    }, [activeTenantId, fetchLogs]);
+    }, [activeTenantId]);
 
     // Filtering Logic
     const tenantLogs = logs[activeTenantId] || [];

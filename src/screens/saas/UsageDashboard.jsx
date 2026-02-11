@@ -23,13 +23,13 @@ const UsageDashboard = () => {
     } = useUsageStore();
 
     const [showUpgrade, setShowUpgrade] = useState(false);
-
+    const canManageBilling = usePermission('billing');
 
     useEffect(() => {
         if (activeTenantId) {
             initTenantUsage(activeTenantId);
         }
-    }, [activeTenantId, initTenantUsage]);
+    }, [activeTenantId]);
 
     const usage = getTenantUsage(activeTenantId);
     const plan = getTenantPlan(activeTenantId);

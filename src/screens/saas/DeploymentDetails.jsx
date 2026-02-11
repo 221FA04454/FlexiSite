@@ -7,11 +7,15 @@ import {
 import { 
     ArrowLeft, Download, RotateCcw, Monitor,
     HardDrive, Clock, ShieldCheck, Zap,
-    Cpu, Activity, Globe, Terminal, ExternalLink, Rocket
+    Cpu, Activity, Globe, Terminal, ExternalLink
 } from 'lucide-react';
+import { useDeploymentStore, DEPLOY_STATUS } from '../../store/saas/deploymentStore';
+import DeploymentStatusBadge from '../../components/saas/DeploymentStatusBadge';
+import DeploymentLogsViewer from '../../components/saas/DeploymentLogsViewer';
+
 const DeploymentDetails = () => {
     const { deploymentId } = useParams();
-    // navigate removed
+    // const navigate = useNavigate();
     const { deployments } = useDeploymentStore();
 
     // Finding deployment across project keys (in a real app, we'd have a lookup)

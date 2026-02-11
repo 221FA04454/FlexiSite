@@ -19,8 +19,8 @@ const Renderer = ({ nodeId }) => {
   const viewPort = useEditorStore((state) => state.viewPort);
 
   // Component Resolution
-  // eslint-disable-next-line react/no-unstable-nested-components
-  const ResolvedComponent = getComponent(node?.type) || UnknownComponent;
+  // eslint-disable-next-line
+  const ResolvedComponent = useMemo(() => getComponent(node?.type) || UnknownComponent, [node?.type]);
   const extraProps = ResolvedComponent === UnknownComponent ? { type: node?.type } : {};
 
   // Style Cascade Logic

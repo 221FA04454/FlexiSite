@@ -31,7 +31,7 @@ const DomainManagement = () => {
 
     useEffect(() => {
         if (activeTenantId) fetchDomains(activeTenantId);
-    }, [activeTenantId, fetchDomains]);
+    }, [activeTenantId]);
 
     const tenantDomains = domains[activeTenantId] || [];
     const filteredDomains = tenantDomains.filter(d => 
@@ -169,7 +169,7 @@ const DomainManagement = () => {
                 open={showUpgradeModal}
                 onClose={() => setShowUpgradeModal(false)}
                 currentPlanId={getTenantPlan(activeTenantId).id}
-                onUpgrade={() => setShowUpgradeModal(false)}
+                onUpgrade={(planId) => setShowUpgradeModal(false)}
             />
         </div>
     );
