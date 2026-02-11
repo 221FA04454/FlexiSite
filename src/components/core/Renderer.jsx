@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { useProjectStore } from '../../store/projectStore';
 import { useEditorStore } from '../../store/editorStore'; // Import Editor Store
-import { getComponent, UnknownComponent, COMPONENT_REGISTRY } from '../registry.jsx';
+import { getComponent, COMPONENT_REGISTRY } from '../registry.jsx';
+import UnknownComponent from './UnknownComponent';
 import EditorBlock from '../builder/EditorBlock';
 import { handleEvent } from '../../utils/interactionRuntime';
 
@@ -18,6 +19,7 @@ const Renderer = ({ nodeId }) => {
   const viewPort = useEditorStore((state) => state.viewPort);
 
   // Component Resolution
+  // eslint-disable-next-line react/no-unstable-nested-components
   const ResolvedComponent = getComponent(node?.type) || UnknownComponent;
   const extraProps = ResolvedComponent === UnknownComponent ? { type: node?.type } : {};
 

@@ -123,7 +123,7 @@ export const COMPONENT_REGISTRY = {
   }
 };
 
-export const UnknownComponent = ({ type }) => <div className="text-red-500 text-xs">Unknown: {type}</div>;
+
 
 export const getComponent = (type) => {
   return COMPONENT_REGISTRY[type]?.component;

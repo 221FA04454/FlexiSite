@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { 
     Code2, Share2, Zap, Globe, Trash2, Plus, 
-    Copy, ExternalLink, MessageSquare, Terminal
+    Copy, ExternalLink, Terminal
 } from 'lucide-react';
 
 const IntegrationPanel = () => {
@@ -172,7 +172,7 @@ const IntegrationPanel = () => {
                                         className="!bg-slate-100 !text-slate-700 !font-medium" 
                                     />
                                 ))}
-                                <Button size="small" className="!text-indigo-600 !normal-case !font-bold">+ Add Origin</Button>
+                                <Button size="small" onClick={() => updateAllowedDomains(activeTenantId, [...integrationData.allowedDomains, 'https://new-origin.com'])} className="!text-indigo-600 !normal-case !font-bold">+ Add Origin</Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -232,7 +232,7 @@ const IntegrationPanel = () => {
                 </DialogContent>
                 <DialogActions className="!p-4 border-t">
                     <Button onClick={() => setOpenWebhook(false)} className="!text-slate-500">Cancel</Button>
-                    <Button variant="contained" className="!bg-indigo-600 !rounded-lg">Activate Hook</Button>
+                    <Button variant="contained" onClick={() => { addWebhook(activeTenantId, { url: webhookUrl, events: ['publish'] }); setOpenWebhook(false); }} className="!bg-indigo-600 !rounded-lg">Activate Hook</Button>
                 </DialogActions>
             </Dialog>
         </div>

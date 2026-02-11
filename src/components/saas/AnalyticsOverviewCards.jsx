@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@mui/material';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-const StatCard = ({ label, value, icon: LucideIcon, trend, color, bg }) => {
+const StatCard = ({ label, value, icon: Icon, trend, color, bg }) => {
     const isPositive = trend.startsWith('+');
     
     return (
@@ -10,7 +10,7 @@ const StatCard = ({ label, value, icon: LucideIcon, trend, color, bg }) => {
             <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
                     <div className={`p-4 rounded-2xl ${bg} ${color}`}>
-                        <LucideIcon size={24} />
+                        <Icon size={24} />
                     </div>
                     {trend && (
                         <div className={`flex items-center gap-1 text-xs font-black px-2 py-1 rounded-lg ${isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-pink-50 text-pink-600'}`}>

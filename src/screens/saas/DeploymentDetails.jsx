@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { 
     Box, Button, Card, CardContent, Divider, 
     IconButton, Grid, Chip, Alert
@@ -7,15 +7,11 @@ import {
 import { 
     ArrowLeft, Download, RotateCcw, Monitor,
     HardDrive, Clock, ShieldCheck, Zap,
-    Cpu, Activity, Globe, Terminal, ExternalLink
+    Cpu, Activity, Globe, Terminal, ExternalLink, Rocket
 } from 'lucide-react';
-import { useDeploymentStore, DEPLOY_STATUS } from '../../store/saas/deploymentStore';
-import DeploymentStatusBadge from '../../components/saas/DeploymentStatusBadge';
-import DeploymentLogsViewer from '../../components/saas/DeploymentLogsViewer';
-
 const DeploymentDetails = () => {
     const { deploymentId } = useParams();
-    // const navigate = useNavigate();
+    // navigate removed
     const { deployments } = useDeploymentStore();
 
     // Finding deployment across project keys (in a real app, we'd have a lookup)

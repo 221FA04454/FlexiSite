@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useProjectStore } from '../../store/projectStore';
-import { getComponent, UnknownComponent } from '../registry.jsx';
+import { getComponent } from '../registry.jsx';
+import UnknownComponent from './UnknownComponent';
 import { handleEvent } from '../../utils/interactionRuntime';
 
 /**
@@ -16,6 +17,7 @@ const RuntimeRenderer = ({ nodeId }) => {
   const node = activePage?.tree?.entities?.[nodeId];
 
   // 1. Resolve Component
+  // eslint-disable-next-line react/no-unstable-nested-components
   const ResolvedComponent = getComponent(node?.type) || UnknownComponent;
   const extraProps = ResolvedComponent === UnknownComponent ? { type: node?.type } : {};
 
